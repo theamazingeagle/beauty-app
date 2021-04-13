@@ -7,11 +7,11 @@ import (
 )
 
 type Storage interface {
-	GetClientByID(ID int64) (types.Client, bool, error)
-	GetAll() (map[int64]types.Client, error)
+	GetClientByID(ID types.ClientID) (types.Client, bool, error)
+	GetAll() (map[types.ClientID]types.Client, error)
 	Create(newClient types.Client) error
 	Update(Client types.Client) error
-	DeleteByID(ID int64) error
+	DeleteByID(ID types.ClientID) error
 }
 
 var (
@@ -31,7 +31,7 @@ func New(s Storage) ClientModel {
 	return ClientModel{storage: s}
 }
 
-func (cm *ClientModel) Get(ID int64) (types.Client, error) {
+func (cm *ClientModel) Get(ID types.ClientID) (types.Client, error) {
 	Client, exist, err := cm.storage.GetClientByID(ID)
 	if err != nil {
 		log.Println("Failed to get Client info")
@@ -44,7 +44,7 @@ func (cm *ClientModel) Get(ID int64) (types.Client, error) {
 	return Client, nil
 }
 
-func (cm *ClientModel) GetAll() (map[int64]types.Client, error) {
+func (cm *ClientModel) GetAll() (map[types.ClientID]types.Client, error) {
 	allClients, err := cm.storage.GetAll()
 	if err != nil {
 		log.Println("Failed to get all Clients info")
@@ -71,7 +71,7 @@ func (cm *ClientModel) Update(Client types.Client) error {
 	return nil
 }
 
-func (cm *ClientModel) Delete(ID int64) error {
+func (cm *ClientModel) Delete(ID types.ClientID) error {
 	err := cm.storage.DeleteByID(ID)
 	if err != nil {
 		log.Println("Failed to delete Client record")

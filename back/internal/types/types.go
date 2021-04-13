@@ -12,10 +12,9 @@ type ServiceID int64
 type Currency int64
 
 type Service struct {
-	ID          ServiceID `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	Cost        Currency  `json:"cost"`
+	ID   ServiceID `json:"id"`
+	Name string    `json:"name"`
+	Cost Currency  `json:"cost"`
 }
 
 type OrderID int64

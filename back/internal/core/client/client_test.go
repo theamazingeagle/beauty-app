@@ -32,7 +32,7 @@ func TestClientModel(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, testValue, receivedValue)
 	// delete
-	err = ClientController.Delete(int64(6))
+	err = ClientController.Delete(types.ClientID(6))
 	assert.Nil(t, err)
 	Client, err := ClientController.Get(6)
 	fmt.Println(Client)
