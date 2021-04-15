@@ -4,7 +4,7 @@ RUN apk add go git
 WORKDIR /bbs-task/
 COPY ./ ./
 #RUN go get -d -v
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "main" ./cmd/
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "main" ./cmd/bbs-task
 
 # STEP 2 build a small image
 FROM scratch

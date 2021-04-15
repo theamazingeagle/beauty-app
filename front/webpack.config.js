@@ -1,10 +1,9 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
     mode: 'development',
-    entry: './src/index.js',
-    //watch: true,
+    entry: './app/app.jsx',
     devServer: {
         contentBase: [
             path.join(__dirname, 'dist'),
@@ -17,10 +16,14 @@ module.exports = {
         port: 8080
     },
     module: {
-        rules: [
+        rules: [   //загрузчик для jsx
             {
-                test: /\.vue$/,
-                loader: 'vue-loader',
+                test: /\.jsx?$/, // определяем тип файлов
+                exclude: /(node_modules)/,  // исключаем из обработки папку node_modules
+                loader: "babel-loader",   // определяем загрузчик
+                options: {
+                    presets: ["@babel/preset-env", "@babel/preset-react"]    // используемые плагины
+                }
             },
             {
                 test: /\.js$/,
@@ -58,8 +61,7 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: "./src/index.html",
-            title: 'Development',
-        }),
-    ],
+            template: "./index.html"
+        })
+    ]
 }

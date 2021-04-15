@@ -2,11 +2,12 @@ package server
 
 import (
 	"bbs-back/internal/types"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/google/jsonapi"
 	"github.com/gorilla/mux"
 )
 
@@ -19,7 +20,7 @@ type ClientController interface {
 }
 
 type Conf struct {
-	Addr string
+	Addr string `json:"addr"`
 }
 
 type Server struct {
@@ -34,11 +35,11 @@ func New(conf Conf, ClientController ClientController) *Server {
 		ClientController: ClientController,
 	}
 	mux := mux.NewRouter()
-	mux.HandleFunc("/client/get/{id:[0-9]+}", server.getClient).Methods("GET")
-	mux.HandleFunc("/client/get", server.getAllClients).Methods("GET")
-	mux.HandleFunc("/client/create", server.createClient).Methods("POST")
-	mux.HandleFunc("/client/update/{id:[0-9]+}", server.updateClient).Methods("PATCH")
-	mux.HandleFunc("/client/delete/{id:[0-9]+}", server.deleteClient).Methods("DELETE")
+	mux.HandleFunc("/api/client/get/{id:[0-9]+}", server.getClient).Methods("GET")
+	mux.HandleFunc("/api/client/get", server.getAllClients).Methods("GET")
+	mux.HandleFunc("/api/client/create", server.createClient).Methods("POST")
+	mux.HandleFunc("/api/client/update/{id:[0-9]+}", server.updateClient).Methods("PATCH")
+	mux.HandleFunc("/api/client/delete/{id:[0-9]+}", server.deleteClient).Methods("DELETE")
 
 	server.HTTPServer = http.Server{Addr: conf.Addr, Handler: mux}
 	return server
@@ -64,12 +65,14 @@ func (s *Server) getClient(w http.ResponseWriter, r *http.Request) {
 		log.Println("Failed to get Client")
 	}
 
-	w.Header().Set("Content-Type", jsonapi.MediaType)
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 
-	if err := jsonapi.MarshalPayload(w, &Client); err != nil {
+	answer, err := json.Marshal(&Client)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+	w.WriteHeader(http.StatusOK)
+	w.Write(answer)
 }
 
 func (s *Server) getAllClients(w http.ResponseWriter, r *http.Request) {
@@ -84,26 +87,32 @@ func (s *Server) getAllClients(w http.ResponseWriter, r *http.Request) {
 		Clients = append(Clients, &newCopy)
 	}
 
-	w.Header().Set("Content-Type", jsonapi.MediaType)
-	w.WriteHeader(http.StatusOK)
-
-	if err := jsonapi.MarshalPayload(w, Clients); err != nil {
+	w.Header().Set("Content-Type", "application/json")
+	answer, err := json.Marshal(&Clients)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+	w.WriteHeader(http.StatusOK)
+	w.Write(answer)
 }
 
 func (s *Server) createClient(w http.ResponseWriter, r *http.Request) {
 	Client := types.Client{}
-
-	if err := jsonapi.UnmarshalPayload(r.Body, &Client); err != nil {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err := s.ClientController.Create(Client)
+	if err := json.Unmarshal(body, &Client); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = s.ClientController.Create(Client)
 	if err != nil {
 		log.Println("Failed to create Client")
+		return
 	}
-	w.Header().Set("Content-Type", jsonapi.MediaType)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 
 	// if err := jsonapi.MarshalPayload(w, struct{}{}); err != nil {
@@ -113,30 +122,38 @@ func (s *Server) createClient(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) updateClient(w http.ResponseWriter, r *http.Request) {
 	Client := types.Client{}
-
-	if err := jsonapi.UnmarshalPayload(r.Body, &Client); err != nil {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err := s.ClientController.Update(Client)
+	if err := json.Unmarshal(body, &Client); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = s.ClientController.Update(Client)
 	if err != nil {
 		log.Println("Failed to create Client")
 	}
-	w.Header().Set("Content-Type", jsonapi.MediaType)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 }
 
 func (s *Server) deleteClient(w http.ResponseWriter, r *http.Request) {
 	Client := types.Client{}
-
-	if err := jsonapi.UnmarshalPayload(r.Body, &Client); err != nil {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err := s.ClientController.Delete(Client.ID)
+	if err := json.Unmarshal(body, &Client); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = s.ClientController.Delete(Client.ID)
 	if err != nil {
 		log.Println("Failed to create Client")
 	}
-	w.Header().Set("Content-Type", jsonapi.MediaType)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }

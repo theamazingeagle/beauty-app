@@ -3,40 +3,39 @@ volumes:
   "pg12-data":
 services:
     nginx:
-      container_name: nginx
+      container_name: bbs-nginx
       build:
         context: ./nginx/
-        dockerfile: Dockerfile-dev
+        dockerfile: Dockerfile
       ports:
-        - 80:80
+        - 8080:80
       volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginx/etc/nginx/nginx-dev.conf:/etc/nginx/nginx.conf
-      environment:
-        - NGINX_HOST=switter.pro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       links:
-        - switter-front
-        - switter-back
-    switter-front:
-      container_name: switter-front
+        - front
+        - back
+        - postgres
+    front:
+      container_name: bbs-front
       build:
-        context: ./switter-front/
+        context: ./front/
         dockerfile: Dockerfile
       volumes:
-      - "./switter-front/src:/var/www/switter-front/src"
+      - "./front/app:/var/bbs/front/app"
       ports:
         - 8181:8080
-    switter-back:
-      container_name: switter-back
+    back:
+      container_name: bbs-back
       build: 
-        context: ./switter-back/
+        context: ./back/
         dockerfile: ./Dockerfile
       ports:
-        - 8192:8080
+        - 8282:8080
       links:
         - postgres
     postgres:
-      container_name: postgres
+      container_name: bbs-postgres
       build: ./postgres/
       ports:
-        - 5432:5432
+        - 6543:5432

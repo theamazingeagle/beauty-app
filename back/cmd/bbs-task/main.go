@@ -3,20 +3,25 @@ package main
 import (
 	"bbs-back/internal/server"
 	"bbs-back/internal/service/memorydb"
+	"bbs-back/internal/service/postgres"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
+	"runtime"
 
 	"bbs-back/internal/core/client"
+	_ "net/http/pprof"
 )
 
 type AppConf struct {
-	Server server.Conf `json:"server"`
+	Server server.Conf           `json:"server"`
+	DB     postgres.PostgresConf `json:"db"`
 }
 
 func main() {
 	log.SetFlags(log.Llongfile)
+	runtime.SetBlockProfileRate(1)
 	appConf, err := loadConfig("./")
 	if err != nil {
 		log.Println("Failed to load config")

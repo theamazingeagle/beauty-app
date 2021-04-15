@@ -13,7 +13,7 @@ func TestClientModel(t *testing.T) {
 	storage := memorydb.New()
 	ClientController := New(&storage)
 	// get
-	testValue := types.Client{2, "Masha", "Medvedeva"}
+	testValue := types.Client{2, "Ksenia", "Tishina"}
 	receivedValue, err := ClientController.Get(2)
 	assert.Nil(t, err)
 	assert.Equal(t, testValue, receivedValue)
