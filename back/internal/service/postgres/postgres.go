@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"bbs-back/internal/types"
+	"beauty/internal/types"
 	"database/sql"
 	"errors"
 	"fmt"

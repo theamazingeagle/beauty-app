@@ -1,7 +1,6 @@
 CREATE TABLE clients (
     id SERIAL NOT NULL PRIMARY KEY,
-    name VARCHAR(256),
-    surname VARCHAR(256)
+    name VARCHAR(256)
 );
 
 CREATE TABLE services (

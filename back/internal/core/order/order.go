@@ -1,7 +1,7 @@
 package Order
 
 import (
-	"bbs-back/internal/types"
+	"beauty/internal/types"
 	"errors"
 	"log"
 )

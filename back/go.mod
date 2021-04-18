@@ -1,4 +1,4 @@
-module bbs-back
+module beauty
 
 go 1.15
 

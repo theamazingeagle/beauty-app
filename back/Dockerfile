@@ -1,14 +1,14 @@
 # STEP 1 build executable binary
 FROM alpine:latest as builder
 RUN apk add go git
-WORKDIR /bbs-task/
+WORKDIR /beauty/
 COPY ./ ./
 #RUN go get -d -v
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "main" ./cmd/bbs-task
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o "main" ./cmd/beauty
 
 # STEP 2 build a small image
 FROM scratch
-COPY --from=builder "/bbs-task/main" "/"
+COPY --from=builder "/beauty/main" "/"
 COPY "./conf.json" "/"
 EXPOSE 8080
 ENTRYPOINT ["/main"]

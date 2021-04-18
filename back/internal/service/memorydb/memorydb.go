@@ -1,7 +1,7 @@
 package memorydb
 
 import (
-	"bbs-back/internal/types"
+	"beauty/internal/types"
 	"errors"
 )
 
@@ -10,13 +10,13 @@ var (
 )
 
 type MemoryDB struct {
-	ClientCollection map[types.ClientID]types.Client
+	ClientCollection []types.Client
 	currentClient    int64
 }
 
 func New() MemoryDB {
 	return MemoryDB{
-		ClientCollection: map[types.ClientID]types.Client{
+		ClientCollection: []types.Client{
 			1: {1, "Katya"},
 			2: {2, "Ksenia"},
 			3: {3, "Liza"},
@@ -28,21 +28,22 @@ func New() MemoryDB {
 }
 
 func (mdb *MemoryDB) GetClientByID(ID types.ClientID) (types.Client, bool, error) {
-	value, exist := mdb.ClientCollection[ID]
-	if exist {
-		return value, true, nil
+	for _, value := range mdb.ClientCollection {
+		if value.ID == ID {
+			return value, true, nil
+		}
 	}
 	return types.Client{}, false, nil
 }
 
-func (mdb *MemoryDB) GetClients() (map[types.ClientID]types.Client, error) {
+func (mdb *MemoryDB) GetClients() ([]types.Client, error) {
 	return mdb.ClientCollection, nil
 }
 
 func (mdb *MemoryDB) CreateClient(newClient types.Client) error {
 	mdb.currentClient++
-	newClient.ID = types.ClientID(mdb.currentClient)
-	mdb.ClientCollection[newClient.ID] = newClient
+
+	mdb.ClientCollection = append(mdb.ClientCollection, newClient)
 	return nil
 }
 
@@ -52,6 +53,6 @@ func (mdb *MemoryDB) UpdateClient(Client types.Client) error {
 }
 
 func (mdb *MemoryDB) DeleteClientByID(ID types.ClientID) error {
-	delete(mdb.ClientCollection, ID)
+	// TODO
 	return nil
 }

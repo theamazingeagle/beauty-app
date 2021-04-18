@@ -1,5 +1,5 @@
 FROM node:lts-alpine
-WORKDIR /var/bbs/front/
+WORKDIR /var/beauty/front/
 COPY ./package.json .
 # COPY ./package-lock.json .
 COPY ./babel.config.json .

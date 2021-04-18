@@ -1,17 +1,16 @@
 package main
 
 import (
-	"bbs-back/internal/server"
-	"bbs-back/internal/service/postgres"
+	"beauty/internal/server"
+	"beauty/internal/service/postgres"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
-	"runtime"
 
-	"bbs-back/internal/core/client"
-	order "bbs-back/internal/core/order"
-	service "bbs-back/internal/core/service"
+	"beauty/internal/core/client"
+	order "beauty/internal/core/order"
+	service "beauty/internal/core/service"
 	_ "net/http/pprof"
 )
 
@@ -22,7 +21,7 @@ type AppConf struct {
 
 func main() {
 	log.SetFlags(log.Llongfile)
-	runtime.SetBlockProfileRate(1)
+	//runtime.SetBlockProfileRate(1)
 	appConf, err := loadConfig("./")
 	if err != nil {
 		log.Println("Failed to load config")

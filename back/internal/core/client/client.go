@@ -1,7 +1,7 @@
 package client
 
 import (
-	"bbs-back/internal/types"
+	"beauty/internal/types"
 	"errors"
 	"log"
 )

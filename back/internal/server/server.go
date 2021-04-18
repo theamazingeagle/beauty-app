@@ -1,7 +1,7 @@
 package server
 
 import (
-	"bbs-back/internal/types"
+	"beauty/internal/types"
 	"encoding/json"
 	"io/ioutil"
 	"log"

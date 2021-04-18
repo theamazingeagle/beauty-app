@@ -1,7 +1,7 @@
-INSERT INTO clients (name, surname) VALUES ('Нина', 'Петрова');
-INSERT INTO clients (name, surname) VALUES ('Вера', 'Калинина');
-INSERT INTO clients (name, surname) VALUES ('Наталья', 'Круглова');
-INSERT INTO clients (name, surname) VALUES ('Марина', 'Беглова');
+INSERT INTO clients (name) VALUES ('Нина');
+INSERT INTO clients (name) VALUES ('Вера');
+INSERT INTO clients (name) VALUES ('Наталья');
+INSERT INTO clients (name) VALUES ('Марина');
 
 INSERT INTO services (name, cost) VALUES ('Массаж', 1500);
 INSERT INTO services (name, cost) VALUES ('Солярий', 1000);

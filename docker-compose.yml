@@ -1,7 +1,7 @@
 version: "3.7"
 services:
     nginx:
-      container_name: bbs-nginx
+      container_name: beauty-nginx
       build:
         context: ./nginx/
         dockerfile: Dockerfile
@@ -15,16 +15,16 @@ services:
         - back
         - postgres
     front:
-      container_name: bbs-front
+      container_name: beauty-front
       build:
         context: ./front/
         dockerfile: Dockerfile
       volumes:
-      - "./front/src:/var/bbs/front/src"
+      - "./front/src:/var/beauty/front/src"
       ports:
         - 8181:8080
     back:
-      container_name: bbs-back
+      container_name: beauty-back
       build: 
         context: ./back/
         dockerfile: ./Dockerfile
@@ -33,7 +33,7 @@ services:
       links:
         - postgres
     postgres:
-      container_name: bbs-postgres
+      container_name: beauty-postgres
       build: ./postgres/
       ports:
         - 6543:5432

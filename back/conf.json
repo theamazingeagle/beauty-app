@@ -1,0 +1,13 @@
+{
+    "server": {
+        "addr": ":8080"
+    },
+    "db": {
+        "dbname": "beauty-db",
+        "hostname": "beauty-postgres",
+        "drivername": "postgres",
+        "username": "postgres",
+        "password": "password",
+        "port": 6543
+    }
+}

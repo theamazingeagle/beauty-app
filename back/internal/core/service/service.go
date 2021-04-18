@@ -1,7 +1,7 @@
 package service
 
 import (
-	"bbs-back/internal/types"
+	"beauty/internal/types"
 	"errors"
 	"log"
 )
