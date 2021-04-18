@@ -42,9 +42,9 @@ func New(conf PostgresConf) (*Postgres, error) {
 }
 
 func (p *Postgres) CreateClient(client types.Client) error {
-	_, err := p.conn.Exec(`INSERT INTO clients(name, surname)
-						  VALUES($1, $2);`,
-		client.Name, client.Surname)
+	_, err := p.conn.Exec(`INSERT INTO clients(name)
+						  VALUES($1);`,
+		client.Name)
 	if err != nil {
 		log.Println("Failed to create client's record", err)
 		return ErrQueryExec
@@ -55,7 +55,7 @@ func (p *Postgres) CreateClient(client types.Client) error {
 func (p *Postgres) GetClientByID(clientID types.ClientID) (types.Client, bool, error) {
 	row := p.conn.QueryRow("SELECT * FROM clients WHERE id=$1 ;", clientID)
 	client := types.Client{}
-	err := row.Scan(&client.ID, &client.Name, &client.Surname)
+	err := row.Scan(&client.ID, &client.Name)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Println("Client not found")
@@ -72,7 +72,7 @@ func (p *Postgres) GetClients() ([]types.Client, error) {
 	clients := []types.Client{}
 	client := types.Client{}
 	for rows.Next() {
-		err = rows.Scan(&client.ID, &client.Name, &client.Surname)
+		err = rows.Scan(&client.ID, &client.Name)
 		if err != nil {
 			log.Println("Failed to get clients info")
 			return []types.Client{}, ErrQueryExec
@@ -83,7 +83,7 @@ func (p *Postgres) GetClients() ([]types.Client, error) {
 }
 
 func (p *Postgres) UpdateClient(client types.Client) error {
-	_, err := p.conn.Exec("UPDATE messages SET name = $1, surname = $2 WHERE id = $3", client.Name, client.Surname, client.ID)
+	_, err := p.conn.Exec("UPDATE messages SET name = $1 WHERE id = $3", client.Name, client.ID)
 	if err != nil {
 		log.Println("Failed to update client info")
 		return ErrQueryExec

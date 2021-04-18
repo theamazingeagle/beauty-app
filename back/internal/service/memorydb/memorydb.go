@@ -17,11 +17,11 @@ type MemoryDB struct {
 func New() MemoryDB {
 	return MemoryDB{
 		ClientCollection: map[types.ClientID]types.Client{
-			1: {1, "Katya", "Vasukova"},
-			2: {2, "Ksenia", "Tishina"},
-			3: {3, "Liza", "Borschova"},
-			4: {4, "Tanya", "Dorenko"},
-			5: {5, "Nina", "Basina"},
+			1: {1, "Katya"},
+			2: {2, "Ksenia"},
+			3: {3, "Liza"},
+			4: {4, "Tanya"},
+			5: {5, "Nina"},
 		},
 		currentClient: 5,
 	}

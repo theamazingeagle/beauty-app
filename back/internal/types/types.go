@@ -3,9 +3,8 @@ package types
 type ClientID int64
 
 type Client struct {
-	ID      ClientID `json:"id"`
-	Name    string   `json:"name"`
-	Surname string   `json:"surname"`
+	ID   ClientID `json:"id"`
+	Name string   `json:"name"`
 }
 
 type ServiceID int64
