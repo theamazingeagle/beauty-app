@@ -28,7 +28,7 @@ type Postgres struct {
 	conn *sql.DB
 }
 
-func NewPostgres(conf PostgresConf) (*Postgres, error) {
+func New(conf PostgresConf) (*Postgres, error) {
 	postgres := &Postgres{}
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		conf.HostName, conf.Port, conf.UserName, conf.Password, conf.DBName)
@@ -67,6 +67,21 @@ func (p *Postgres) GetClientByID(clientID types.ClientID) (types.Client, bool, e
 	return client, true, nil
 }
 
+func (p *Postgres) GetClients() ([]types.Client, error) {
+	rows, err := p.conn.Query("SELECT * FROM clients ;")
+	clients := []types.Client{}
+	client := types.Client{}
+	for rows.Next() {
+		err = rows.Scan(&client.ID, &client.Name, &client.Surname)
+		if err != nil {
+			log.Println("Failed to get clients info")
+			return []types.Client{}, ErrQueryExec
+		}
+		clients = append(clients, client)
+	}
+	return clients, nil
+}
+
 func (p *Postgres) UpdateClient(client types.Client) error {
 	_, err := p.conn.Exec("UPDATE messages SET name = $1, surname = $2 WHERE id = $3", client.Name, client.Surname, client.ID)
 	if err != nil {
@@ -76,7 +91,7 @@ func (p *Postgres) UpdateClient(client types.Client) error {
 	return nil
 }
 
-func (p *Postgres) DeleteClient(clientID types.ClientID) error {
+func (p *Postgres) DeleteClientByID(clientID types.ClientID) error {
 	_, err := p.conn.Exec("DELETE FROM messages WHERE id=$1", clientID)
 	if err != nil {
 		log.Println("Failed to delete client info")
@@ -111,6 +126,21 @@ func (p *Postgres) GetServiceByID(serviceID types.ServiceID) (types.Service, boo
 	return service, true, nil
 }
 
+func (p *Postgres) GetServices() ([]types.Service, error) {
+	rows, err := p.conn.Query("SELECT * FROM services ;")
+	services := []types.Service{}
+	service := types.Service{}
+	for rows.Next() {
+		err = rows.Scan(&service.ID, &service.Name, &service.Cost)
+		if err != nil {
+			log.Println("Failed to get clients info")
+			return []types.Service{}, ErrQueryExec
+		}
+		services = append(services, service)
+	}
+	return services, nil
+}
+
 func (p *Postgres) UpdateService(service types.Service) error {
 	_, err := p.conn.Exec("UPDATE services SET name = $1, cost = $2 WHERE id = $3",
 		service.Name, service.Cost, service.ID)
@@ -121,7 +151,7 @@ func (p *Postgres) UpdateService(service types.Service) error {
 	return nil
 }
 
-func (p *Postgres) DeleteService(serviceID types.ServiceID) error {
+func (p *Postgres) DeleteServiceByID(serviceID types.ServiceID) error {
 	_, err := p.conn.Exec("DELETE FROM services WHERE id=$1", serviceID)
 	if err != nil {
 		log.Println("Failed to delete service info")
@@ -131,7 +161,7 @@ func (p *Postgres) DeleteService(serviceID types.ServiceID) error {
 }
 
 func (p *Postgres) CreateOrder(order types.Order) error {
-	_, err := p.conn.Exec(`INSERT INTO orders(name, surname)
+	_, err := p.conn.Exec(`INSERT INTO orders(service_id, client_id, creation_time, order_time)
 						  VALUES($1, $2, $3, $4);`,
 		order.ServiceID, order.ClientID, order.CreationTime, order.OrderTime)
 	if err != nil {
@@ -156,8 +186,23 @@ func (p *Postgres) GetOrderByID(orderID types.OrderID) (types.Order, bool, error
 	return order, true, nil
 }
 
+func (p *Postgres) GetOrders() ([]types.Order, error) {
+	rows, err := p.conn.Query("SELECT * FROM orders ;")
+	orders := []types.Order{}
+	order := types.Order{}
+	for rows.Next() {
+		err = rows.Scan(&order.ID, &order.ServiceID, &order.ClientID, &order.CreationTime, &order.OrderTime)
+		if err != nil {
+			log.Println("Failed to get clients info")
+			return []types.Order{}, ErrQueryExec
+		}
+		orders = append(orders, order)
+	}
+	return orders, nil
+}
+
 func (p *Postgres) UpdateOrder(order types.Order) error {
-	_, err := p.conn.Exec("UPDATE orders SET order_time = $1 WHERE id = $2", order.OrderTime, order.ClientID)
+	_, err := p.conn.Exec("UPDATE orders SET order_time = $1 WHERE id = $2", order.OrderTime, order.ID)
 	if err != nil {
 		log.Println("Failed to update order info")
 		return ErrQueryExec
@@ -165,7 +210,7 @@ func (p *Postgres) UpdateOrder(order types.Order) error {
 	return nil
 }
 
-func (p *Postgres) DeleteOrder(orderID types.OrderID) error {
+func (p *Postgres) DeleteOrderByID(orderID types.OrderID) error {
 	_, err := p.conn.Exec("DELETE FROM orders WHERE id=$1", orderID)
 	if err != nil {
 		log.Println("Failed to delete order info")

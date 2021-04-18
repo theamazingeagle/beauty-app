@@ -8,10 +8,10 @@ import (
 
 type Storage interface {
 	GetClientByID(ID types.ClientID) (types.Client, bool, error)
-	GetAll() (map[types.ClientID]types.Client, error)
-	Create(newClient types.Client) error
-	Update(Client types.Client) error
-	DeleteByID(ID types.ClientID) error
+	GetClients() ([]types.Client, error)
+	CreateClient(newClient types.Client) error
+	UpdateClient(Client types.Client) error
+	DeleteClientByID(ID types.ClientID) error
 }
 
 var (
@@ -44,8 +44,8 @@ func (cm *ClientModel) Get(ID types.ClientID) (types.Client, error) {
 	return Client, nil
 }
 
-func (cm *ClientModel) GetAll() (map[types.ClientID]types.Client, error) {
-	allClients, err := cm.storage.GetAll()
+func (cm *ClientModel) GetAll() ([]types.Client, error) {
+	allClients, err := cm.storage.GetClients()
 	if err != nil {
 		log.Println("Failed to get all Clients info")
 		return nil, ErrFailedToFetchAll
@@ -54,7 +54,7 @@ func (cm *ClientModel) GetAll() (map[types.ClientID]types.Client, error) {
 }
 
 func (cm *ClientModel) Create(Client types.Client) error {
-	err := cm.storage.Create(Client)
+	err := cm.storage.CreateClient(Client)
 	if err != nil {
 		log.Println("Failed to create Client record")
 		return ErrFailedToCreate
@@ -63,7 +63,7 @@ func (cm *ClientModel) Create(Client types.Client) error {
 }
 
 func (cm *ClientModel) Update(Client types.Client) error {
-	err := cm.storage.Update(Client)
+	err := cm.storage.UpdateClient(Client)
 	if err != nil {
 		log.Println("Failed to update Client record")
 		return ErrFailedToUpdate
@@ -72,7 +72,7 @@ func (cm *ClientModel) Update(Client types.Client) error {
 }
 
 func (cm *ClientModel) Delete(ID types.ClientID) error {
-	err := cm.storage.DeleteByID(ID)
+	err := cm.storage.DeleteClientByID(ID)
 	if err != nil {
 		log.Println("Failed to delete Client record")
 		return ErrFailedToDelete

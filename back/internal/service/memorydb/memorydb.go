@@ -35,23 +35,23 @@ func (mdb *MemoryDB) GetClientByID(ID types.ClientID) (types.Client, bool, error
 	return types.Client{}, false, nil
 }
 
-func (mdb *MemoryDB) GetAll() (map[types.ClientID]types.Client, error) {
+func (mdb *MemoryDB) GetClients() (map[types.ClientID]types.Client, error) {
 	return mdb.ClientCollection, nil
 }
 
-func (mdb *MemoryDB) Create(newClient types.Client) error {
+func (mdb *MemoryDB) CreateClient(newClient types.Client) error {
 	mdb.currentClient++
 	newClient.ID = types.ClientID(mdb.currentClient)
 	mdb.ClientCollection[newClient.ID] = newClient
 	return nil
 }
 
-func (mdb *MemoryDB) Update(Client types.Client) error {
+func (mdb *MemoryDB) UpdateClient(Client types.Client) error {
 	mdb.ClientCollection[Client.ID] = Client
 	return nil
 }
 
-func (mdb *MemoryDB) DeleteByID(ID types.ClientID) error {
+func (mdb *MemoryDB) DeleteClientByID(ID types.ClientID) error {
 	delete(mdb.ClientCollection, ID)
 	return nil
 }

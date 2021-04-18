@@ -2,7 +2,6 @@ package main
 
 import (
 	"bbs-back/internal/server"
-	"bbs-back/internal/service/memorydb"
 	"bbs-back/internal/service/postgres"
 	"encoding/json"
 	"io/ioutil"
@@ -11,6 +10,8 @@ import (
 	"runtime"
 
 	"bbs-back/internal/core/client"
+	order "bbs-back/internal/core/order"
+	service "bbs-back/internal/core/service"
 	_ "net/http/pprof"
 )
 
@@ -27,10 +28,13 @@ func main() {
 		log.Println("Failed to load config")
 		return
 	}
-	memDB := memorydb.New()
-	ClientController := client.New(&memDB)
+	//memDB := memorydb.New()
+	pgDB, err := postgres.New(appConf.DB)
 
-	server := server.New(appConf.Server, &ClientController)
+	clientController := client.New(pgDB)
+	orderController := order.New(pgDB)
+	serviceController := service.New(pgDB)
+	server := server.New(appConf.Server, &clientController, &orderController, &serviceController)
 	server.Run()
 }
 
