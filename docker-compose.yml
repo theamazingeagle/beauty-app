@@ -1,6 +1,4 @@
 version: "3.7"
-volumes:
-  "pg12-data":
 services:
     nginx:
       container_name: bbs-nginx
@@ -22,7 +20,7 @@ services:
         context: ./front/
         dockerfile: Dockerfile
       volumes:
-      - "./front/app:/var/bbs/front/app"
+      - "./front/src:/var/bbs/front/src"
       ports:
         - 8181:8080
     back:

@@ -2,8 +2,9 @@ const path = require('path');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
+    resolve: { extensions: ['.js', '.jsx', '.css', '.sass'] },
     mode: 'development',
-    entry: './app/app.jsx',
+    entry: path.join(__dirname, 'src', 'app.jsx'),
     devServer: {
         contentBase: [
             path.join(__dirname, 'dist'),
@@ -18,18 +19,9 @@ module.exports = {
     module: {
         rules: [   //загрузчик для jsx
             {
-                test: /\.jsx?$/, // определяем тип файлов
+                test: /\.(jsx|js)$/, // определяем тип файлов
                 exclude: /(node_modules)/,  // исключаем из обработки папку node_modules
                 loader: "babel-loader",   // определяем загрузчик
-                options: {
-                    presets: ["@babel/preset-env", "@babel/preset-react"]    // используемые плагины
-                }
-            },
-            {
-                test: /\.js$/,
-                use: {
-                    loader: "babel-loader"
-                }
             },
             {
                 test: /.css$/,

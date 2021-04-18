@@ -38,7 +38,7 @@ func New(conf Conf, ClientController ClientController) *Server {
 	mux.HandleFunc("/api/client/get/{id:[0-9]+}", server.getClient).Methods("GET")
 	mux.HandleFunc("/api/client/get", server.getAllClients).Methods("GET")
 	mux.HandleFunc("/api/client/create", server.createClient).Methods("POST")
-	mux.HandleFunc("/api/client/update/{id:[0-9]+}", server.updateClient).Methods("PATCH")
+	mux.HandleFunc("/api/client/update", server.updateClient).Methods("PATCH")
 	mux.HandleFunc("/api/client/delete/{id:[0-9]+}", server.deleteClient).Methods("DELETE")
 
 	server.HTTPServer = http.Server{Addr: conf.Addr, Handler: mux}
@@ -140,17 +140,16 @@ func (s *Server) updateClient(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) deleteClient(w http.ResponseWriter, r *http.Request) {
-	Client := types.Client{}
-	body, err := ioutil.ReadAll(r.Body)
+	clientIDStr, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println("bad pam Client id")
+	}
+	clientID := types.ClientID(clientIDStr)
+	if err != nil {
+		log.Println("invalid Client id")
 		return
 	}
-	if err := json.Unmarshal(body, &Client); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	err = s.ClientController.Delete(Client.ID)
+	err = s.ClientController.Delete(clientID)
 	if err != nil {
 		log.Println("Failed to create Client")
 	}
