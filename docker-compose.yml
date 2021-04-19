@@ -36,4 +36,4 @@ services:
       container_name: beauty-postgres
       build: ./postgres/
       ports:
-        - 6543:5432
+        - 5432:5432

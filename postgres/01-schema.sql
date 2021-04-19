@@ -6,7 +6,6 @@ CREATE TABLE clients (
 CREATE TABLE services (
     id SERIAL NOT NULL PRIMARY KEY,
     name TEXT,
-    description TEXT,
     cost BIGINT
 );
 

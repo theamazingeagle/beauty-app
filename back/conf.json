@@ -8,6 +8,6 @@
         "drivername": "postgres",
         "username": "postgres",
         "password": "password",
-        "port": 6543
+        "port": 5432
     }
 }

@@ -69,6 +69,10 @@ func (p *Postgres) GetClientByID(clientID types.ClientID) (types.Client, bool, e
 
 func (p *Postgres) GetClients() ([]types.Client, error) {
 	rows, err := p.conn.Query("SELECT * FROM clients ;")
+	if err != nil {
+		log.Println("Failed to query clients info", err)
+		return []types.Client{}, ErrQueryExec
+	}
 	clients := []types.Client{}
 	client := types.Client{}
 	for rows.Next() {
@@ -128,12 +132,16 @@ func (p *Postgres) GetServiceByID(serviceID types.ServiceID) (types.Service, boo
 
 func (p *Postgres) GetServices() ([]types.Service, error) {
 	rows, err := p.conn.Query("SELECT * FROM services ;")
+	if err != nil {
+		log.Println("Failed to query services info", err)
+		return []types.Service{}, ErrQueryExec
+	}
 	services := []types.Service{}
 	service := types.Service{}
 	for rows.Next() {
 		err = rows.Scan(&service.ID, &service.Name, &service.Cost)
 		if err != nil {
-			log.Println("Failed to get clients info")
+			log.Println("Failed to get services info: ", err)
 			return []types.Service{}, ErrQueryExec
 		}
 		services = append(services, service)
@@ -188,6 +196,10 @@ func (p *Postgres) GetOrderByID(orderID types.OrderID) (types.Order, bool, error
 
 func (p *Postgres) GetOrders() ([]types.Order, error) {
 	rows, err := p.conn.Query("SELECT * FROM orders ;")
+	if err != nil {
+		log.Println("Failed to query orders info", err)
+		return []types.Order{}, ErrQueryExec
+	}
 	orders := []types.Order{}
 	order := types.Order{}
 	for rows.Next() {
