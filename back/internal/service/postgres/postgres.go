@@ -61,7 +61,7 @@ func (p *Postgres) GetClientByID(clientID types.ClientID) (types.Client, bool, e
 			log.Println("Client not found")
 			return types.Client{}, false, ErrNotFound
 		}
-		log.Println("Failed to get client info")
+		log.Println("Failed to get client info: ", err)
 		return types.Client{}, false, ErrQueryExec
 	}
 	return client, true, nil
@@ -70,7 +70,7 @@ func (p *Postgres) GetClientByID(clientID types.ClientID) (types.Client, bool, e
 func (p *Postgres) GetClients() ([]types.Client, error) {
 	rows, err := p.conn.Query("SELECT * FROM clients ;")
 	if err != nil {
-		log.Println("Failed to query clients info", err)
+		log.Println("Failed to query clients info: ", err)
 		return []types.Client{}, ErrQueryExec
 	}
 	clients := []types.Client{}
@@ -78,7 +78,7 @@ func (p *Postgres) GetClients() ([]types.Client, error) {
 	for rows.Next() {
 		err = rows.Scan(&client.ID, &client.Name)
 		if err != nil {
-			log.Println("Failed to get clients info")
+			log.Println("Failed to get clients info: ", err)
 			return []types.Client{}, ErrQueryExec
 		}
 		clients = append(clients, client)
@@ -87,18 +87,18 @@ func (p *Postgres) GetClients() ([]types.Client, error) {
 }
 
 func (p *Postgres) UpdateClient(client types.Client) error {
-	_, err := p.conn.Exec("UPDATE messages SET name = $1 WHERE id = $3", client.Name, client.ID)
+	_, err := p.conn.Exec("UPDATE clients SET name = $1 WHERE id = $2", client.Name, client.ID)
 	if err != nil {
-		log.Println("Failed to update client info")
+		log.Println("Failed to update client info: ", err)
 		return ErrQueryExec
 	}
 	return nil
 }
 
 func (p *Postgres) DeleteClientByID(clientID types.ClientID) error {
-	_, err := p.conn.Exec("DELETE FROM messages WHERE id=$1", clientID)
+	_, err := p.conn.Exec("DELETE FROM clients WHERE id=$1", clientID)
 	if err != nil {
-		log.Println("Failed to delete client info")
+		log.Println("Failed to delete client info: ", err)
 		return ErrQueryExec
 	}
 	return nil
@@ -109,7 +109,7 @@ func (p *Postgres) CreateService(service types.Service) error {
 						VALUES($1, $2);`,
 		service.Name, service.Cost)
 	if err != nil {
-		log.Println("Failed to create service record", err)
+		log.Println("Failed to create service record: ", err)
 		return ErrQueryExec
 	}
 	return nil
@@ -124,7 +124,7 @@ func (p *Postgres) GetServiceByID(serviceID types.ServiceID) (types.Service, boo
 			log.Println("Service not found")
 			return types.Service{}, false, ErrNotFound
 		}
-		log.Println("Failed to get service info")
+		log.Println("Failed to get service info: ", err)
 		return types.Service{}, false, ErrQueryExec
 	}
 	return service, true, nil
@@ -133,7 +133,7 @@ func (p *Postgres) GetServiceByID(serviceID types.ServiceID) (types.Service, boo
 func (p *Postgres) GetServices() ([]types.Service, error) {
 	rows, err := p.conn.Query("SELECT * FROM services ;")
 	if err != nil {
-		log.Println("Failed to query services info", err)
+		log.Println("Failed to query services info: ", err)
 		return []types.Service{}, ErrQueryExec
 	}
 	services := []types.Service{}
@@ -153,7 +153,7 @@ func (p *Postgres) UpdateService(service types.Service) error {
 	_, err := p.conn.Exec("UPDATE services SET name = $1, cost = $2 WHERE id = $3",
 		service.Name, service.Cost, service.ID)
 	if err != nil {
-		log.Println("Failed to update service info")
+		log.Println("Failed to update service info: ", err)
 		return ErrQueryExec
 	}
 	return nil
@@ -162,7 +162,7 @@ func (p *Postgres) UpdateService(service types.Service) error {
 func (p *Postgres) DeleteServiceByID(serviceID types.ServiceID) error {
 	_, err := p.conn.Exec("DELETE FROM services WHERE id=$1", serviceID)
 	if err != nil {
-		log.Println("Failed to delete service info")
+		log.Println("Failed to delete service info: ", err)
 		return ErrQueryExec
 	}
 	return nil
@@ -173,7 +173,7 @@ func (p *Postgres) CreateOrder(order types.Order) error {
 						  VALUES($1, $2, $3, $4);`,
 		order.ServiceID, order.ClientID, order.CreationTime, order.OrderTime)
 	if err != nil {
-		log.Println("Failed to create order record", err)
+		log.Println("Failed to create order record: ", err)
 		return ErrQueryExec
 	}
 	return nil
@@ -188,7 +188,7 @@ func (p *Postgres) GetOrderByID(orderID types.OrderID) (types.Order, bool, error
 			log.Println("Order not found")
 			return types.Order{}, false, ErrNotFound
 		}
-		log.Println("Failed to get order info")
+		log.Println("Failed to get order info: ", err)
 		return types.Order{}, false, ErrQueryExec
 	}
 	return order, true, nil
@@ -197,7 +197,7 @@ func (p *Postgres) GetOrderByID(orderID types.OrderID) (types.Order, bool, error
 func (p *Postgres) GetOrders() ([]types.Order, error) {
 	rows, err := p.conn.Query("SELECT * FROM orders ;")
 	if err != nil {
-		log.Println("Failed to query orders info", err)
+		log.Println("Failed to query orders info: ", err)
 		return []types.Order{}, ErrQueryExec
 	}
 	orders := []types.Order{}
@@ -205,7 +205,7 @@ func (p *Postgres) GetOrders() ([]types.Order, error) {
 	for rows.Next() {
 		err = rows.Scan(&order.ID, &order.ServiceID, &order.ClientID, &order.CreationTime, &order.OrderTime)
 		if err != nil {
-			log.Println("Failed to get clients info")
+			log.Println("Failed to get clients info: ", err)
 			return []types.Order{}, ErrQueryExec
 		}
 		orders = append(orders, order)
@@ -216,7 +216,7 @@ func (p *Postgres) GetOrders() ([]types.Order, error) {
 func (p *Postgres) UpdateOrder(order types.Order) error {
 	_, err := p.conn.Exec("UPDATE orders SET order_time = $1 WHERE id = $2", order.OrderTime, order.ID)
 	if err != nil {
-		log.Println("Failed to update order info")
+		log.Println("Failed to update order info: ", err)
 		return ErrQueryExec
 	}
 	return nil
@@ -225,7 +225,7 @@ func (p *Postgres) UpdateOrder(order types.Order) error {
 func (p *Postgres) DeleteOrderByID(orderID types.OrderID) error {
 	_, err := p.conn.Exec("DELETE FROM orders WHERE id=$1", orderID)
 	if err != nil {
-		log.Println("Failed to delete order info")
+		log.Println("Failed to delete order info: ", err)
 		return ErrQueryExec
 	}
 	return nil

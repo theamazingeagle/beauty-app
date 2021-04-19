@@ -17,6 +17,6 @@ CREATE TABLE orders (
     order_time TIMESTAMP
 );
 
-ALTER TABLE orders ADD FOREIGN KEY (service_id) REFERENCES services(id);
-ALTER TABLE orders ADD FOREIGN KEY (client_id) REFERENCES clients(id);
+ALTER TABLE orders ADD FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE;
+ALTER TABLE orders ADD FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE;
 ALTER TABLE orders ALTER COLUMN creation_time SET DEFAULT Now();
