@@ -1,6 +1,8 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-import { ClientsList } from './components/ClientsList';
+import { Client } from './components/Client';
+import { Service } from './components/Service';
+//import { Order } from './components/Order';
 import { AppContext } from './context';
 import { API } from './api.js';
 
@@ -15,9 +17,7 @@ const TabContent = ({ title, element }) => (
 
 function Tabs({ items }) {
   const [active, setActive] = React.useState(null);
-
   const openTab = e => setActive(+e.target.dataset.index);
-
   return (
     <div>
       <div className="tab">
@@ -34,9 +34,9 @@ function Tabs({ items }) {
 }
 
 const items = [
-  { title: "Список клиентов", element: React.createElement(ClientsList) },
-  { title: "Список услуг", element: 'Paris' },
-  { title: "Список заказов", element: 'Tokyo' },
+  { title: "Список клиентов", element: React.createElement(Client) },
+  { title: "Список услуг", element: React.createElement(Service) },
+  //{ title: "Список заказов", element: React.createElement(Order) },
 ];
 
 ReactDOM.render(
